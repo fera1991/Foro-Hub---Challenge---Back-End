@@ -125,7 +125,7 @@ Este proyecto es una API REST desarrollada en Java como parte del Challenge ONE 
         "numberOfElements": 3,
         "first": true,
         "empty": false
-    }
+       }
        ```
 
 **Nota:** Usa herramientas como Postman o Insomnia para probar los endpoints. Asegúrate de incluir el token JWT en la cabecera `Authorization` para las operaciones que requieren autenticación.

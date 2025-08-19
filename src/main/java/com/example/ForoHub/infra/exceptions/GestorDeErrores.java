@@ -1,7 +1,7 @@
 package com.example.ForoHub.infra.exceptions;
 
+
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,50 +13,53 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 @RestControllerAdvice
 public class GestorDeErrores {
-    @ExceptionHandler({EntityNotFoundException.class})
+
+    @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity getionarError404() {
         return ResponseEntity.notFound().build();
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity getionarError400(MethodArgumentNotValidException ex) {
-        List<FieldError> errores = ex.getFieldErrors();
+        var errores = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(errores.stream().map(DatosErrorValidacion::new).toList());
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class})
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity gestionarError400(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler({BadCredentialsException.class})
+    @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity gestionarErrorBadCredentials() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
     }
 
-    @ExceptionHandler({AuthenticationException.class})
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity gestionarErrorAuthentication() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falla en la autenticación");
     }
 
-    @ExceptionHandler({AccessDeniedException.class})
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity gestionarErrorAccesoDenegado() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acceso denegado");
     }
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler(Exception.class)
     public ResponseEntity gestionarError500(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + ex.getLocalizedMessage());
     }
 
-    @ExceptionHandler({ConflicDataException.class})
+    @ExceptionHandler(ConflicDataException.class)
     public ResponseEntity gestionarErrorDuplicidad(ConflicDataException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    public static record DatosErrorValidacion(String campo, String mensaje) {
+
+    public record DatosErrorValidacion(String campo, String mensaje) {
         public DatosErrorValidacion(FieldError error) {
             this(error.getField(), error.getDefaultMessage());
         }
